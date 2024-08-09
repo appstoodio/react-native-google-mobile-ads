@@ -71,4 +71,5 @@ Pod::Spec.new do |s|
   else
     s.static_framework = false
   end
+  s.dependency "CriteoPublisherSdk", "6.2.0"
 end

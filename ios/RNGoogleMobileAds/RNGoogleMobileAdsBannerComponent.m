@@ -17,9 +17,11 @@
 
 #if !TARGET_OS_MACCATALYST
 
+#import "GNAdUnits.h"
 #import "RNGoogleMobileAdsBannerComponent.h"
 #import <React/RCTLog.h>
 #import "RNGoogleMobileAdsCommon.h"
+#import <CriteoPublisherSdk/CriteoPublisherSdk.h>
 
 @implementation RNGoogleMobileAdsBannerComponent
 
@@ -57,6 +59,8 @@
   }
   _banner.rootViewController = [UIApplication sharedApplication].delegate.window.rootViewController;
   _banner.delegate = self;
+
+  [self registerCriteo];
 }
 
 - (void)setUnitId:(NSString *)unitId {
@@ -133,12 +137,21 @@
 }
 
 - (void)load {
-  [_banner loadRequest:[RNGoogleMobileAdsCommon buildAdRequest:_request]];
-  [self sendEvent:@"onSizeChange"
-          payload:@{
-            @"width" : @(_banner.bounds.size.width),
-            @"height" : @(_banner.bounds.size.height),
-          }];
+  id adUnit = [GNAdUnits adUnitForAdUnitId:_banner.adUnitID];
+  /* Banner - Set Criteo bids on GAMRequest object */
+    [[Criteo sharedCriteo] loadBidForAdUnit:adUnit responseHandler:^(CRBid *bid) {
+        if(bid != nil) {
+            // add Criteo bids into Ad Manager request
+            [[Criteo sharedCriteo] enrichAdObject:self->_request withBid:bid];
+        }
+        
+        [self->_banner loadRequest:[RNGoogleMobileAdsCommon buildAdRequest:self->_request]];
+        [self sendEvent:@"onSizeChange"
+                payload:@{
+            @"width" : @(self->_banner.bounds.size.width),
+            @"height" : @(self->_banner.bounds.size.height),
+                }];
+    }];
 }
 
 - (void)sendEvent:(NSString *)type payload:(NSDictionary *_Nullable)payload {
@@ -196,6 +209,18 @@
   if ([_banner class] == [GAMBannerView class]) {
     [((GAMBannerView *)_banner) recordImpression];
   }
+}
+
+/* Criteo */
+- (void)registerCriteo {
+#if DEBUG
+  [Criteo setVerboseLogsEnabled:true];
+#endif
+  
+  NSString *criteoPublisherId = @"B-062567";
+  NSString *storeId = @"716643133";
+  
+  [[Criteo sharedCriteo] registerCriteoPublisherId:criteoPublisherId withStoreId:storeId withAdUnits: [GNAdUnits allAdUnits]];
 }
 
 @end
