@@ -72,4 +72,5 @@ Pod::Spec.new do |s|
     s.static_framework = false
   end
   s.dependency "CriteoPublisherSdk", "6.2.0"
+  s.dependency 'GoogleMobileAdsMediationInMobi', "10.7.4.0"
 end

@@ -22,6 +22,7 @@
 #import <React/RCTLog.h>
 #import "RNGoogleMobileAdsCommon.h"
 #import <CriteoPublisherSdk/CriteoPublisherSdk.h>
+#import <InMobiAdapter/InMobiAdapter.h>
 
 @implementation RNGoogleMobileAdsBannerComponent
 
@@ -61,6 +62,7 @@
   _banner.delegate = self;
 
   [self registerCriteo];
+  [self registerInMobi];
 }
 
 - (void)setUnitId:(NSString *)unitId {
@@ -221,6 +223,18 @@
   NSString *storeId = @"716643133";
   
   [[Criteo sharedCriteo] registerCriteoPublisherId:criteoPublisherId withStoreId:storeId withAdUnits: [GNAdUnits allAdUnits]];
+}
+
+/* InMobi */
+- (void)registerInMobi {
+    NSMutableDictionary *consentObject = [[NSMutableDictionary alloc] init];
+    
+    // Set GDPR consent information
+    [consentObject setObject:@"1" forKey:@"gdpr"]; // GDPR applies
+    [consentObject setObject:@"true" forKey:IMCommonConstants.IM_GDPR_CONSENT_AVAILABLE]; // Consent available
+    
+    // Update InMobi SDK with the consent information
+    [GADMInMobiConsent updateGDPRConsent:consentObject];
 }
 
 @end
