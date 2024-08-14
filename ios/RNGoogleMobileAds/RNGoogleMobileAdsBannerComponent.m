@@ -230,7 +230,7 @@
     NSMutableDictionary *consentObject = [[NSMutableDictionary alloc] init];
     
     // Set GDPR consent information
-    [consentObject setObject:@"1" forKey:@"gdpr"]; // GDPR applies
+    [consentObject setObject:@"0" forKey:@"gdpr"]; // GDPR applies
     [consentObject setObject:@"true" forKey:IMCommonConstants.IM_GDPR_CONSENT_AVAILABLE]; // Consent available
     
     // Update InMobi SDK with the consent information
