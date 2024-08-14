@@ -126,6 +126,7 @@ repositories {
 
 dependencies {
   implementation("com.google.android.gms:play-services-ads:${googleMobileAdsVersion}")
+  implementation("com.google.ads.mediation:inmobi:10.7.5.0")
   api "com.google.android.ump:user-messaging-platform:${googleUmpVersion}"
 }
 

@@ -39,6 +39,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import com.inmobi.sdk.InMobiSdk;
+import com.google.ads.mediation.inmobi.InMobiConsent;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 public class ReactNativeGoogleMobileAdsModule extends ReactNativeModule {
   private static final String SERVICE = "RNGoogleMobileAdsModule";
 
@@ -140,6 +146,15 @@ public class ReactNativeGoogleMobileAdsModule extends ReactNativeModule {
 
   @ReactMethod
   public void setRequestConfiguration(ReadableMap requestConfiguration, Promise promise) {
+    JSONObject consentObject = new JSONObject();
+    try {
+      consentObject.put(InMobiSdk.IM_GDPR_CONSENT_AVAILABLE, true);
+      consentObject.put("gdpr", "0");
+    } catch (JSONException exception) {
+      exception.printStackTrace();
+    }
+
+    InMobiConsent.updateGDPRConsent(consentObject);
     MobileAds.setRequestConfiguration(buildRequestConfiguration(requestConfiguration));
     promise.resolve(null);
   }
